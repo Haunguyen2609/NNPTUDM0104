@@ -7,15 +7,28 @@ let jwt = require('jsonwebtoken');
 const { ChangePasswordValidator, validatedResult } = require('../utils/validator');
 let crypto = require('crypto')
 let { sendMail } = require('../utils/mailHandler')
+let cartModel = require('../schemas/carts');
+let mongoose = require('mongoose')
 
 router.post('/register', async function (req, res, next) {
+    let session = await mongoose.startSession();
+    session.startTransaction()
     try {
         let { username, password, email } = req.body;
         let newUser = await userController.CreateAnUser(username, password, email,
-            "69b1265c33c5468d1c85aad8"
+            "69b1265c33c5468d1c85aad8", session
         )
-        res.send(newUser)
+        let newCArt = new cartModel({
+            user: newUser._id
+        })
+        await newCArt.save({ session });
+        await newCArt.populate('user')
+        await session.commitTransaction();
+        await session.endSession()
+        res.send(newCArt)
     } catch (error) {
+        await session.abortTransaction();
+        await session.endSession()
         res.status(404).send({
             message: error.message
         })
