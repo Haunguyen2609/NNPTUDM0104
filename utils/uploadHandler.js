@@ -26,6 +26,10 @@ let filterExcel = function (req, file, cb) {
     }
 }
 module.exports = {
+    uploadFile: multer({
+        storage: storageSetting,
+        limits: 5 * 1024 * 1024
+    }),
     uploadImage: multer({
         storage: storageSetting,
         limits: 5 * 1024 * 1024,

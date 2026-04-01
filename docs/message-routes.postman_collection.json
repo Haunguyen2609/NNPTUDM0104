@@ -1,0 +1,140 @@
+{
+  "info": {
+    "_postman_id": "5c2db215-ef91-42d1-a1c4-9ff7bd0a4f27",
+    "name": "NNPTUD-C4 - Message Routers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET messages by userID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "description": "Lay toan bo message giua user hien tai va otherUserId.",
+        "url": {
+          "raw": "{{baseUrl}}/messages/{{otherUserId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "messages",
+            "{{otherUserId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST message text",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Gui tin nhan text. Neu la text thi type = text va text = noi dung gui.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"to\": \"{{otherUserId}}\",\n  \"text\": \"xin chao\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "messages"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST message file",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "description": "Gui tin nhan file. Neu co file thi type = file va text = path cua file.",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "to",
+              "value": "{{otherUserId}}",
+              "type": "text"
+            },
+            {
+              "key": "file",
+              "type": "file",
+              "src": "package.json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "messages"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET last messages",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "description": "Lay message cuoi cung cua moi user da nhan tin voi user hien tai.",
+        "url": {
+          "raw": "{{baseUrl}}/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "messages"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "otherUserId",
+      "value": ""
+    }
+  ]
+}
