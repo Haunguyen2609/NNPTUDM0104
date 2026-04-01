@@ -22,7 +22,13 @@ router.post('/register', async function (req, res, next) {
         await newCArt.populate('user')
         res.send(newCArt)
     } catch (error) {
-        res.status(404).send({
+        if (error.code === 11000) {
+            res.status(409).send({
+                message: "username hoac email da ton tai"
+            })
+            return;
+        }
+        res.status(400).send({
             message: error.message
         })
     }

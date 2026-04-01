@@ -1,126 +1,390 @@
 {
   "info": {
-    "_postman_id": "5c2db215-ef91-42d1-a1c4-9ff7bd0a4f27",
-    "name": "NNPTUD-C4 - Message Routers",
+    "_postman_id": "8d39ae5c-77d1-4fdc-915e-0eb7830ee468",
+    "name": "NNPTUD-C4 - Message Test",
+    "description": "Collection de test cho register/login va 3 router message. Chay theo thu tu tu tren xuong duoi.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "GET messages by userID",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token}}"
-          }
-        ],
-        "description": "Lay toan bo message giua user hien tai va otherUserId.",
-        "url": {
-          "raw": "{{baseUrl}}/messages/{{otherUserId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "messages",
-            "{{otherUserId}}"
-          ]
-        }
-      }
-    },
-    {
-      "name": "POST message text",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token}}"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "description": "Gui tin nhan text. Neu la text thi type = text va text = noi dung gui.",
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"to\": \"{{otherUserId}}\",\n  \"text\": \"xin chao\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{baseUrl}}/messages",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "messages"
-          ]
-        }
-      }
-    },
-    {
-      "name": "POST message file",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token}}"
-          }
-        ],
-        "description": "Gui tin nhan file. Neu co file thi type = file va text = path cua file.",
-        "body": {
-          "mode": "formdata",
-          "formdata": [
+      "name": "1. Auth Setup",
+      "item": [
+        {
+          "name": "Register User A",
+          "event": [
             {
-              "key": "to",
-              "value": "{{otherUserId}}",
-              "type": "text"
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const stamp = Date.now();",
+                  "pm.collectionVariables.set('userAUsername', `postman_user_a_${stamp}`);",
+                  "pm.collectionVariables.set('userAEmail', `postman_user_a_${stamp}@example.com`);",
+                  "pm.collectionVariables.set('userAPassword', '123456');"
+                ]
+              }
             },
             {
-              "key": "file",
-              "type": "file",
-              "src": "package.json"
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Register A status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.user && data.user._id) {",
+                  "    pm.collectionVariables.set('userAId', data.user._id);",
+                  "}"
+                ]
+              }
             }
-          ]
-        },
-        "url": {
-          "raw": "{{baseUrl}}/messages",
-          "host": [
-            "{{baseUrl}}"
           ],
-          "path": [
-            "messages"
-          ]
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{userAUsername}}\",\n  \"password\": \"{{userAPassword}}\",\n  \"email\": \"{{userAEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Tao user A de test nhan/gui message."
+          }
+        },
+        {
+          "name": "Register User B",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const stamp = Date.now();",
+                  "pm.collectionVariables.set('userBUsername', `postman_user_b_${stamp}`);",
+                  "pm.collectionVariables.set('userBEmail', `postman_user_b_${stamp}@example.com`);",
+                  "pm.collectionVariables.set('userBPassword', '123456');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Register B status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.user && data.user._id) {",
+                  "    pm.collectionVariables.set('userBId', data.user._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{userBUsername}}\",\n  \"password\": \"{{userBPassword}}\",\n  \"email\": \"{{userBEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Tao user B de test nhan/gui message."
+          }
+        },
+        {
+          "name": "Login User A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login A status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const token = pm.response.text();",
+                  "if (token) {",
+                  "    pm.collectionVariables.set('tokenA', token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{userAUsername}}\",\n  \"password\": \"{{userAPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login B status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const token = pm.response.text();",
+                  "if (token) {",
+                  "    pm.collectionVariables.set('tokenB', token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{userBUsername}}\",\n  \"password\": \"{{userBPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "GET last messages",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token}}"
+      "name": "2. Message Routes",
+      "item": [
+        {
+          "name": "POST message text A -> B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenA}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{userBId}}\",\n  \"text\": \"xin chao tu user A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            },
+            "description": "Gui tin nhan text tu A sang B."
           }
-        ],
-        "description": "Lay message cuoi cung cua moi user da nhan tin voi user hien tai.",
-        "url": {
-          "raw": "{{baseUrl}}/messages",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "messages"
-          ]
+        },
+        {
+          "name": "POST message text B -> A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenB}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{userAId}}\",\n  \"text\": \"phan hoi tu user B\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            },
+            "description": "Gui tin nhan text tu B sang A."
+          }
+        },
+        {
+          "name": "POST message file A -> B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenA}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "to",
+                  "value": "{{userBId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            },
+            "description": "Chon file trong Postman roi gui tu A sang B."
+          }
+        },
+        {
+          "name": "GET messages A with B",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenA}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/messages/{{userBId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages",
+                "{{userBId}}"
+              ]
+            },
+            "description": "Lay toan bo message giua A va B."
+          }
+        },
+        {
+          "name": "GET last messages of A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenA}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            },
+            "description": "Lay message cuoi cung cua moi cuoc hoi thoai cua A."
+          }
         }
-      }
+      ]
     }
   ],
   "variable": [
@@ -129,11 +393,43 @@
       "value": "http://localhost:3000/api/v1"
     },
     {
-      "key": "token",
+      "key": "userAUsername",
       "value": ""
     },
     {
-      "key": "otherUserId",
+      "key": "userAEmail",
+      "value": ""
+    },
+    {
+      "key": "userAPassword",
+      "value": "123456"
+    },
+    {
+      "key": "userAId",
+      "value": ""
+    },
+    {
+      "key": "tokenA",
+      "value": ""
+    },
+    {
+      "key": "userBUsername",
+      "value": ""
+    },
+    {
+      "key": "userBEmail",
+      "value": ""
+    },
+    {
+      "key": "userBPassword",
+      "value": "123456"
+    },
+    {
+      "key": "userBId",
+      "value": ""
+    },
+    {
+      "key": "tokenB",
       "value": ""
     }
   ]
